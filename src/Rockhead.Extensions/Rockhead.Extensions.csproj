@@ -5,11 +5,24 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>12</LangVersion>
+    <Title>Rockhead.Extensions</Title>
+    <Authors>François Bouteruche</Authors>
+    <Description>Rockhead is a set of extension methods for the AWS SDK for .NET Bedrock Runtime clinet. It provides you strongly typed parameters and responses to make your developer life easier.</Description>
+    <PackageProjectUrl>https://github.com/fbouteruche/rockhead-extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fbouteruche/rockhead-extensions</RepositoryUrl>
+    <PackageTags>Bedrock, GenerativeAI, GenAI, AI</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <Version>0.1.0-prerelease</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Bedrock" Version="3.7.301.43" />
-    <PackageReference Include="AWSSDK.BedrockRuntime" Version="3.7.301.43" />
+    <PackageReference Include="AWSSDK.Bedrock" Version="[3.7.300,)" />
+    <PackageReference Include="AWSSDK.BedrockRuntime" Version="[3.7.300,)" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="../../Readme.md" Pack="true" PackagePath="/"/>
   </ItemGroup>
 
 </Project>
