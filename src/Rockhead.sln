@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rockhead.Extensions", "Rockhead.Extensions\Rockhead.Extensions.csproj", "{66700C66-1375-44DF-A0C2-9DF04FC1A0FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rockhead.Extensions.Tests", "Rockhead.Extensions.Tests\Rockhead.Extensions.Tests.csproj", "{96380660-E6AB-4BCB-8A35-76F0D7C68610}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{66700C66-1375-44DF-A0C2-9DF04FC1A0FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66700C66-1375-44DF-A0C2-9DF04FC1A0FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66700C66-1375-44DF-A0C2-9DF04FC1A0FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96380660-E6AB-4BCB-8A35-76F0D7C68610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96380660-E6AB-4BCB-8A35-76F0D7C68610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96380660-E6AB-4BCB-8A35-76F0D7C68610}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96380660-E6AB-4BCB-8A35-76F0D7C68610}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

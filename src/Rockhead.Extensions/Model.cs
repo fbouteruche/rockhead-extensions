@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using Rockhead.Extensions.AI21Labs;
-
-namespace Rockhead.Extensions;
+﻿namespace Rockhead.Extensions;
 
 public abstract record Model(string ModelId, bool StreamingSupported)
 {

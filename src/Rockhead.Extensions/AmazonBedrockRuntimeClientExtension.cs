@@ -93,7 +93,7 @@ namespace Rockhead.Extensions
         /// <param name="textToImageParams">The text to image prompt definition</param>
         /// <param name="cancellationToken">A cancellation token</param>
         /// <returns>The Stability AI Stable Diffusion XL response</returns> 
-        public static async Task<StableDiffusionResponse?> InvokeStabilityAIStableDiffusionXLv1ForTextToImageAsync(this AmazonBedrockRuntimeClient client, StableDiffusionTextToImageParams textToImageParams, CancellationToken cancellationToken = default)
+        public static async Task<StableDiffusionResponse?> InvokeStableDiffusionXlForTextToImageAsync(this AmazonBedrockRuntimeClient client, StableDiffusionTextToImageParams textToImageParams, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(textToImageParams);
             Validator.ValidateObject(textToImageParams, new ValidationContext(textToImageParams), true);
@@ -129,7 +129,7 @@ namespace Rockhead.Extensions
             if (textGenerationConfig is not null)
             {
                 Validator.ValidateObject(textGenerationConfig, new ValidationContext(textGenerationConfig), true);
-                payload.Add("imageGenerationConfig", JsonSerializer.SerializeToNode(textGenerationConfig));
+                payload.Add("textGenerationConfig", JsonSerializer.SerializeToNode(textGenerationConfig));
             }
 
             InvokeModelResponse response = await client.InvokeModelAsync(new InvokeModelRequest()
@@ -163,7 +163,7 @@ namespace Rockhead.Extensions
             if (textGenerationConfig is not null)
             {
                 Validator.ValidateObject(textGenerationConfig, new ValidationContext(textGenerationConfig), true);
-                payload.Add("imageGenerationConfig", JsonSerializer.SerializeToNode(textGenerationConfig));
+                payload.Add("textGenerationConfig", JsonSerializer.SerializeToNode(textGenerationConfig));
             }
 
             InvokeModelWithResponseStreamResponse response = await client.InvokeModelWithResponseStreamAsync(new InvokeModelWithResponseStreamRequest()
