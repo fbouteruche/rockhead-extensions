@@ -76,7 +76,7 @@ public class CommandTest
         }
     }
     
-    [Theory(Skip = "Need to stabilize the extension method and the test")]
+    [Theory()]
     [Trait("Category", "Integration")]
     [MemberData(nameof(Models))]
     public async Task InvokeCommandV14WithResponseStreamAsync_ShouldNotBeNullOrEmpty(Model.CommandText model)
