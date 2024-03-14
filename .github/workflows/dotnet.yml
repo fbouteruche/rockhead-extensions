@@ -33,8 +33,8 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" src/Rockhead.sln || true
     - name: Test Report
-      uses: dorny/test-reporter@v1
-      if: dorny/test-reporter@v1.8.0
+      uses: dorny/test-reporter@v1.8.0
+      if: always()
       with:
         name: Test Report
         path: "**/test-results.trx"                            
