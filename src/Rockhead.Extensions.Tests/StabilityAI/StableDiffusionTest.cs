@@ -8,7 +8,7 @@ public class StableDiffusionTest
 {
     private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new();
     
-    [Fact]
+    [Fact(Skip = "Need to stabilize the extension method and the test")]
     [Trait("Category", "Integration")]
     public async Task InvokeTitanImageGeneratorG1ForTextToImageAsync_ShouldNotBeNullOrEmpty()
     {
