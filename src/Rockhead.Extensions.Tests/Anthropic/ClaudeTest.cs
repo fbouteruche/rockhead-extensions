@@ -88,7 +88,7 @@ public class ClaudeTest
         }
     }
     
-    [Theory(Skip = "Need to stabilize the extension method and the test")]
+    [Theory()]
     [Trait("Category", "Integration")]
     [MemberData(nameof(Models))]
     public async Task InvokeClaudeWithResponseStreamAsync_ValidConfig_ShouldNotBeNullOrEmpty(Model.Claude model)
