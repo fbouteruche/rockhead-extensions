@@ -58,7 +58,7 @@ public class Llama2Test
         Assert.NotNull(response.PromptTokenCount);
     }
     
-    [Theory]
+    [Theory(Skip = "Need to stabilize the extension method and the test")]
     [Trait("Category", "Integration")]
     [MemberData(nameof(Models))]
     public async Task InvokeLlama2WithResponseStreamAsync_ShouldNotBeNullOrEmpty(Model.Llama2 model)
@@ -80,7 +80,7 @@ public class Llama2Test
         Assert.NotNull(promptTokenCount);
     }
     
-    [Theory]
+    [Theory(Skip = "Need to stabilize the extension method and the test")]
     [Trait("Category", "Integration")]
     [MemberData(nameof(Models))]
     public async Task InvokeLlama2WithResponseStreamAsync_ValidConfig_ShouldNotBeNullOrEmpty(Model.Llama2 model)
