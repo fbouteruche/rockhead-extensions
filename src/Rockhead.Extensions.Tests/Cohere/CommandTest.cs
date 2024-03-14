@@ -114,11 +114,11 @@ public class CommandTest
             
             // Assert
             Assert.NotNull(chunk);
-            Assert.NotNull(chunk.Text);
+            Assert.False(chunk.Text is null, "Text property is null");
             Assert.NotEmpty(chunk.Text);
             if(chunk.IsFinished is not null && chunk.IsFinished.Value)
             {
-                Assert.NotNull(chunk.FinishReason);
+                Assert.False(chunk.FinishReason is null, "Finish reason property is null");
             }
         }
     }
