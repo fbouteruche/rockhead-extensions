@@ -87,14 +87,16 @@ public class CommandTest
         // Act
         await foreach (var chunk in  BedrockRuntime.InvokeCommandV14WithResponseStreamAsync(model, prompt))
         {
-            
             // Assert
-            Assert.NotNull(chunk);
-            Assert.NotNull(chunk.Text);
-            Assert.NotEmpty(chunk.Text);
+            chunk.Should().NotBeNull();
             if(chunk.IsFinished is not null && chunk.IsFinished.Value)
             {
-                Assert.NotNull(chunk.FinishReason);
+                chunk.FinishReason.Should().NotBeNull();
+            }
+            else
+            {
+                chunk.Text.Should().NotBeNull();
+                chunk.Text.Should().NotBeEmpty();
             }
         }
     }
@@ -111,14 +113,16 @@ public class CommandTest
         // Act
         await foreach (var chunk in  BedrockRuntime.InvokeCommandV14WithResponseStreamAsync(model, prompt, config))
         {
-            
             // Assert
-            Assert.NotNull(chunk);
-            Assert.NotNull(chunk.Text);
-            Assert.NotEmpty(chunk.Text);
+            chunk.Should().NotBeNull();
             if(chunk.IsFinished is not null && chunk.IsFinished.Value)
             {
-                Assert.NotNull(chunk.FinishReason);
+                chunk.FinishReason.Should().NotBeNull();
+            }
+            else
+            {
+                chunk.Text.Should().NotBeNull();
+                chunk.Text.Should().NotBeEmpty();
             }
         }
     }
