@@ -58,7 +58,7 @@ public class ClaudeTest
         Assert.NotEmpty(response.StopReason);
     }
     
-    [Theory(Skip = "Need to stabilize the extension method and the test")]
+    [Theory()]
     [Trait("Category", "Integration")]
     [MemberData(nameof(Models))]
     public async Task InvokeClaudeWithResponseStreamAsync_ShouldNotBeNullOrEmpty(Model.Claude model)
