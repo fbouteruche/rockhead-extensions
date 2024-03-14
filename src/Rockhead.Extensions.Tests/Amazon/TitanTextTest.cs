@@ -85,7 +85,7 @@ public class TitanTextTest
         }
     }
     
-    [Theory(Skip = "Need to stabilize the extension method and the test")]
+    [Theory()]
     [Trait("Category", "Integration")]
     [MemberData(nameof(Models))]
     public async Task InvokeTitanTextG1WithResponseStreamAsync_ValidConfig_ShouldNotBeNullOrEmpty(Model.TitanText model)
