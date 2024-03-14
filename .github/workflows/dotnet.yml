@@ -11,6 +11,8 @@ on:
 
 jobs:
   build:
+    permissions:
+      id-token: write # This is required for requesting the JWT
 
     runs-on: ubuntu-latest
 
@@ -24,5 +26,10 @@ jobs:
       run: dotnet restore src/Rockhead.sln
     - name: Build
       run: dotnet build --no-restore src/Rockhead.sln
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::204847680503:role/github-actions-role
+        aws-region: us-east-1
     - name: Test
       run: dotnet test --no-build --verbosity normal src/Rockhead.sln
