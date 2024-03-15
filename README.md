@@ -81,7 +81,7 @@ public async Task<string> GetLlmDescription()
         Temperature = 0.8f
     };
     
-    var response = await BedrockRuntime.InvokeClaudeAsync(new Model.ClaudeV2_1(), prompt);
+    var response = await BedrockRuntime.InvokeClaudeAsync(new Model.ClaudeV2_1(), prompt, config);
     
     return response?.Completion ?? "";
 }
@@ -100,7 +100,7 @@ public async Task<string> GetLlmDescription()
         };
 
         var response = new StringBuilder();
-        await foreach (var chunk in BedrockRuntime.InvokeClaudeWithResponseStreamAsync(new Model.ClaudeV2_1(), prompt))
+        await foreach (var chunk in BedrockRuntime.InvokeClaudeWithResponseStreamAsync(new Model.ClaudeV2_1(), prompt, config))
         {
             response.Append(chunk.Completion);
         }
@@ -121,7 +121,7 @@ public async Task<string> GetLlmDescription()
         Temperature = 0.8f
     };
     
-    var response = await BedrockRuntime.InvokeLlama2Async(new Model.Llama270BChatV1(), prompt);
+    var response = await BedrockRuntime.InvokeLlama2Async(new Model.Llama270BChatV1(), prompt, config);
     
     return response?.Generation ?? "";
 }
