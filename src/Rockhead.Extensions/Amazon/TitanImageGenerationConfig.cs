@@ -36,6 +36,7 @@ namespace Rockhead.Extensions.Amazon
         [JsonPropertyName("seed")]
         public int Seed { get; set; }
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum ImageQuality
         {
             Standard,
