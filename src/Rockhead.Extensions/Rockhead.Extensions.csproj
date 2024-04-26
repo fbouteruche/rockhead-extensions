@@ -13,7 +13,7 @@
     <PackageTags>Bedrock, GenerativeAI, GenAI, AI</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
-    <Version>0.1.0-preview</Version>
+    <Version>0.1.1-preview</Version>
   </PropertyGroup>
 
   <ItemGroup>
