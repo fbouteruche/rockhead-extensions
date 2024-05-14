@@ -71,7 +71,6 @@ public abstract record Model(string ModelId, bool StreamingSupported)
             "cohere.embed-multilingual-v3" => new EmbedMultilingualV3(),
             "meta.llama2-13b-chat-v1" => new Llama213BChatV1(),
             "meta.llama2-70b-chat-v1" => new Llama270BChatV1(),
-            "stability.stable-diffusion-xl-v0" => new StableDiffusionXlV0(),
             "stability.stable-diffusion-xl-v1" => new StableDiffusionXlV1(),
             _ => throw new ArgumentException($"{modelId} is not a supported or valid model Id")
         };
