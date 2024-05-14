@@ -1,3 +1,4 @@
+using Amazon;
 using Amazon.BedrockRuntime;
 using Rockhead.Extensions.AI21Labs;
 
@@ -5,7 +6,7 @@ namespace Rockhead.Extensions.Tests.AI21Labs;
 
 public class Jurassic2Test
 {
-    private readonly AmazonBedrockRuntimeClient _bedrockRuntime = new();
+    private readonly AmazonBedrockRuntimeClient _bedrockRuntime = new(RegionEndpoint.USEast1);
     public static TheoryData<Model.Jurassic2> Models =>
         new TheoryData<Model.Jurassic2>
         {

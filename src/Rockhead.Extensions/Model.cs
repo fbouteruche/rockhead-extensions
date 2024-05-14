@@ -25,7 +25,8 @@ public abstract record Model(string ModelId, bool StreamingSupported)
     public abstract record Llama2(string ModelId, bool StreamingSupported) : Model(ModelId, StreamingSupported);
     public record Llama213BChatV1() : Llama2("meta.llama2-13b-chat-v1", true);
     public record Llama270BChatV1() : Llama2("meta.llama2-70b-chat-v1", true);
-    public record StableDiffusionXL() : Model("stability.stable-diffusion-xl-v0", false);
+    public abstract record StableDiffusionXl(string ModelId, bool StreamingSupported) : Model(ModelId, StreamingSupported);
+    public record StableDiffusionXlV1() : StableDiffusionXl("stability.stable-diffusion-xl-v1", false);
 
     public static bool IsSupported(string modelId)
     {
@@ -70,7 +71,8 @@ public abstract record Model(string ModelId, bool StreamingSupported)
             "cohere.embed-multilingual-v3" => new EmbedMultilingualV3(),
             "meta.llama2-13b-chat-v1" => new Llama213BChatV1(),
             "meta.llama2-70b-chat-v1" => new Llama270BChatV1(),
-            "stability.stable-diffusion-xl-v0" => new StableDiffusionXL(),
+            "stability.stable-diffusion-xl-v0" => new StableDiffusionXlV0(),
+            "stability.stable-diffusion-xl-v1" => new StableDiffusionXlV1(),
             _ => throw new ArgumentException($"{modelId} is not a supported or valid model Id")
         };
 }

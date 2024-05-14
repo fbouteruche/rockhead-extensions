@@ -90,17 +90,18 @@ namespace Rockhead.Extensions
         /// Invoke Stability AI Stable Diffusion XL v1 for text to image generation
         /// </summary>
         /// <param name="client">The Amazon Bedrock Runtime client object</param>
+        /// <param name="model">The Stable Diffusion XL model to invoke
         /// <param name="textToImageParams">The text to image prompt definition</param>
         /// <param name="cancellationToken">A cancellation token</param>
         /// <returns>The Stability AI Stable Diffusion XL response</returns> 
-        public static async Task<StableDiffusionResponse?> InvokeStableDiffusionXlForTextToImageAsync(this AmazonBedrockRuntimeClient client, StableDiffusionTextToImageParams textToImageParams, CancellationToken cancellationToken = default)
+        public static async Task<StableDiffusionResponse?> InvokeStableDiffusionXlForTextToImageAsync(this AmazonBedrockRuntimeClient client, Model.StableDiffusionXl model, StableDiffusionTextToImageParams textToImageParams, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(textToImageParams);
             Validator.ValidateObject(textToImageParams, new ValidationContext(textToImageParams), true);
             
             InvokeModelResponse response = await client.InvokeModelAsync(new InvokeModelRequest()
                 {
-                    ModelId = new Model.StableDiffusionXL().ModelId,
+                    ModelId = model.ModelId,
                     ContentType = "application/json",
                     Accept = "application/json",
                     Body = new MemoryStream(JsonSerializer.SerializeToUtf8Bytes(textToImageParams))

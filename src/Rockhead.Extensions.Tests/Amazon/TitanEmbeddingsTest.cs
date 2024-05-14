@@ -1,12 +1,11 @@
-using Amazon.Bedrock;
+using Amazon;
 using Amazon.BedrockRuntime;
-using Rockhead.Extensions.Amazon;
 
 namespace Rockhead.Extensions.Tests.Amazon;
 
 public class TitanEmbeddingsTest
 {
-    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new();
+    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new(RegionEndpoint.USEast1);
     
     [Fact]
     [Trait("Category", "Integration")]

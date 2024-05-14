@@ -1,12 +1,12 @@
+using Amazon;
 using Amazon.BedrockRuntime;
-using Rockhead.Extensions.Amazon;
 using Rockhead.Extensions.Meta;
 
 namespace Rockhead.Extensions.Tests.Meta;
 
 public class Llama2Test
 {
-    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new();
+    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new(RegionEndpoint.USEast1);
     public static TheoryData<Model.Llama2> Models =>
         new TheoryData<Model.Llama2>
         {

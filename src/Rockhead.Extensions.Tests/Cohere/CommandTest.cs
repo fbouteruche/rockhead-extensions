@@ -1,12 +1,12 @@
+using Amazon;
 using Amazon.BedrockRuntime;
-using Rockhead.Extensions.Amazon;
 using Rockhead.Extensions.Cohere;
 
 namespace Rockhead.Extensions.Tests.Cohere;
 
 public class CommandTest
 {
-    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new();
+    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new(RegionEndpoint.USEast1);
     public static TheoryData<Model.CommandText> Models =>
         new TheoryData<Model.CommandText>
         {

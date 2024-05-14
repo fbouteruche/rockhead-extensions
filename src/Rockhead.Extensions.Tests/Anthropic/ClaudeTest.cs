@@ -1,12 +1,12 @@
+using Amazon;
 using Amazon.BedrockRuntime;
-using Rockhead.Extensions.Amazon;
 using Rockhead.Extensions.Anthropic;
 
 namespace Rockhead.Extensions.Tests.Anthropic;
 
 public class ClaudeTest
 {
-    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new();
+    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new(RegionEndpoint.USEast1);
     public static TheoryData<Model.Claude> Models =>
         new TheoryData<Model.Claude>
         {

@@ -1,3 +1,4 @@
+using Amazon;
 using Amazon.BedrockRuntime;
 using Rockhead.Extensions.Amazon;
 
@@ -5,7 +6,7 @@ namespace Rockhead.Extensions.Tests.Amazon;
 
 public class TitanTextTest
 {
-    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new();
+    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new(RegionEndpoint.USEast1);
     public static TheoryData<Model.TitanText> Models =>
         new TheoryData<Model.TitanText>
             {

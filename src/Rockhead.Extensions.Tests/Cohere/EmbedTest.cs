@@ -1,3 +1,4 @@
+using Amazon;
 using Amazon.BedrockRuntime;
 using Rockhead.Extensions.Cohere;
 
@@ -5,7 +6,7 @@ namespace Rockhead.Extensions.Tests.Cohere;
 
 public class EmbedTest
 {
-    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new();
+    private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new(RegionEndpoint.USEast1);
     public static TheoryData<Model.Embed> Models =>
         new TheoryData<Model.Embed>
         {
