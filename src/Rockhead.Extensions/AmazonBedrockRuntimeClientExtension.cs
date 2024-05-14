@@ -12,6 +12,7 @@ using Rockhead.Extensions.Amazon;
 using Rockhead.Extensions.Anthropic;
 using Rockhead.Extensions.Cohere;
 using Rockhead.Extensions.Meta;
+using Rockhead.Extensions.MistralAI;
 using Rockhead.Extensions.StabilityAI;
 
 namespace Rockhead.Extensions
@@ -490,15 +491,15 @@ namespace Rockhead.Extensions
         }
 
         /// <summary>
-        /// Invoke a Llama 2 model (13B Chat V1 or 70B Chat V1) for text completion
+        /// Invoke a Llama model (Llama 2 13B Chat, Llama 2 70B Chat, Llama 3 8B Instruct or Llama 3 70B Instruct) for text completion
         /// </summary>
         /// <param name="client">The Amazon Bedrock Runtime client object</param>
-        /// <param name="model">The Llama 2 model to invoke</param>
+        /// <param name="model">The Llama model to invoke</param>
         /// <param name="prompt">The input text to complete</param>
         /// <param name="textGenerationConfig">The text generation configuration</param>
         /// <param name="cancellationToken">A cancellation token</param>
-        /// <returns>The Llama 2 model response</returns>
-        public static async Task<Llama2Response?> InvokeLlama2Async(this AmazonBedrockRuntimeClient client, Model.Llama2 model, string prompt, Llama2TextGenerationConfig? textGenerationConfig = null, CancellationToken cancellationToken = default)
+        /// <returns>The Llama model response</returns>
+        public static async Task<LlamaResponse?> InvokeLlamaAsync(this AmazonBedrockRuntimeClient client, Model.Llama model, string prompt, LlamaTextGenerationConfig? textGenerationConfig = null, CancellationToken cancellationToken = default)
         {
             JsonObject? payload = null;
             if (textGenerationConfig != null)
@@ -519,19 +520,19 @@ namespace Rockhead.Extensions
                 },
                 cancellationToken).ConfigureAwait(false);
 
-            return await JsonSerializer.DeserializeAsync<Llama2Response>(response.Body, cancellationToken: cancellationToken).ConfigureAwait(false);
+            return await JsonSerializer.DeserializeAsync<LlamaResponse>(response.Body, cancellationToken: cancellationToken).ConfigureAwait(false);
         }
-        
+
         /// <summary>
-        /// Invoke a Llama 2 model (13B Chat V1 or 70B Chat V1) for text completion with a response stream
+        /// Invoke a Llama model (Llama 2 13B Chat, Llama 2 70B Chat, Llama 3 8B Instruct or Llama 3 70B Instruct) for text completion with a response stream
         /// </summary>
         /// <param name="client">The Amazon Bedrock Runtime client object</param>
-        /// <param name="model">The Llama 2 model to invoke</param>
+        /// <param name="model">The Llama model to invoke</param>
         /// <param name="prompt">The input text to complete</param>
         /// <param name="textGenerationConfig">The text generation configuration</param>
         /// <param name="cancellationToken">A cancellation token</param>
-        /// <returns>An asynchronous enumeration of Llama 2 model responses</returns>
-        public static async IAsyncEnumerable<Llama2Response> InvokeLlama2WithResponseStreamAsync(this AmazonBedrockRuntimeClient client, Model.Llama2 model, string prompt, Llama2TextGenerationConfig? textGenerationConfig = null, [EnumeratorCancellation]CancellationToken cancellationToken = default)
+        /// <returns>An asynchronous enumeration of Llama model responses</returns>
+        public static async IAsyncEnumerable<LlamaResponse> InvokeLlamaWithResponseStreamAsync(this AmazonBedrockRuntimeClient client, Model.Llama model, string prompt, LlamaTextGenerationConfig? textGenerationConfig = null, [EnumeratorCancellation]CancellationToken cancellationToken = default)
         {
             JsonObject? payload = null;
             if (textGenerationConfig != null)
@@ -552,7 +553,7 @@ namespace Rockhead.Extensions
                 },
                 cancellationToken).ConfigureAwait(false);
 
-            Channel<Llama2Response> buffer = Channel.CreateUnbounded<Llama2Response>();
+            Channel<LlamaResponse> buffer = Channel.CreateUnbounded<LlamaResponse>();
             bool isStreaming = true;
 
             response.Body.ChunkReceived += BodyOnChunkReceived;
@@ -568,11 +569,11 @@ namespace Rockhead.Extensions
             
             async void BodyOnChunkReceived(object? sender, EventStreamEventReceivedArgs<PayloadPart> e)
             {
-                var streamResponse = await JsonSerializer.DeserializeAsync<Llama2Response>(e.EventStreamEvent.Bytes, cancellationToken: cancellationToken).ConfigureAwait(false);
+                var streamResponse = await JsonSerializer.DeserializeAsync<LlamaResponse>(e.EventStreamEvent.Bytes, cancellationToken: cancellationToken).ConfigureAwait(false);
 
                 if (streamResponse is null)
                 {
-                    throw new NullReferenceException($"Unable to deserialize {nameof(e.EventStreamEvent.Bytes)} to {nameof(CommandStreamingResponse)}");
+                    throw new NullReferenceException($"Unable to deserialize {nameof(e.EventStreamEvent.Bytes)} to {nameof(LlamaResponse)}");
                 }
 
                 if (streamResponse.GetStopReason() != null)
@@ -580,6 +581,101 @@ namespace Rockhead.Extensions
                     isStreaming = false;
                 }
                 
+                await buffer.Writer.WriteAsync(streamResponse, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Invoke a Mistral model (Mistral 7B Instruct, Mistral 8x7B Instruct or Mistral Large) for text completion
+        /// </summary>
+        /// <param name="client">The Amazon Bedrock Runtime client object</param>
+        /// <param name="model">The Mistral model to invoke</param>
+        /// <param name="prompt">The input text to complete</param>
+        /// <param name="textGenerationConfig">The text generation configuration</param>
+        /// <param name="cancellationToken">A cancellation token</param>
+        /// <returns>The Mistral model response</returns>
+        public static async Task<MistralResponse?> InvokeMistralAsync(this AmazonBedrockRuntimeClient client, Model.Mistral model, string prompt, MistralTextGenerationConfig? textGenerationConfig = null, CancellationToken cancellationToken = default)
+        {
+            JsonObject? payload = null;
+            if (textGenerationConfig != null)
+            {
+                Validator.ValidateObject(textGenerationConfig, new ValidationContext(textGenerationConfig), true);
+                payload = JsonSerializer.SerializeToNode(textGenerationConfig)?.AsObject();
+            }
+
+            payload ??= new JsonObject();
+            payload.Add("prompt", prompt);
+
+            InvokeModelResponse response = await client.InvokeModelAsync(new InvokeModelRequest()
+            {
+                ModelId = model.ModelId,
+                ContentType = "application/json",
+                Accept = "application/json",
+                Body = AWSSDKUtils.GenerateMemoryStreamFromString(payload.ToJsonString())
+            },
+                cancellationToken).ConfigureAwait(false);
+
+            return await JsonSerializer.DeserializeAsync<MistralResponse>(response.Body, cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Invoke a Mistral model (Mistral 7B Instruct, Mistral 8x7B Instruct or Mistral Large) for text completion with a response stream
+        /// </summary>
+        /// <param name="client">The Amazon Bedrock Runtime client object</param>
+        /// <param name="model">The Mistral model to invoke</param>
+        /// <param name="prompt">The input text to complete</param>
+        /// <param name="textGenerationConfig">The text generation configuration</param>
+        /// <param name="cancellationToken">A cancellation token</param>
+        /// <returns>An asynchronous enumeration of Mistral model responses</returns>
+        public static async IAsyncEnumerable<MistralResponse> InvokeMistralWithResponseStreamAsync(this AmazonBedrockRuntimeClient client, Model.Mistral model, string prompt, MistralTextGenerationConfig? textGenerationConfig = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            JsonObject? payload = null;
+            if (textGenerationConfig != null)
+            {
+                Validator.ValidateObject(textGenerationConfig, new ValidationContext(textGenerationConfig), true);
+                payload = JsonSerializer.SerializeToNode(textGenerationConfig)?.AsObject();
+            }
+
+            payload ??= new JsonObject();
+            payload.Add("prompt", prompt);
+
+            InvokeModelWithResponseStreamResponse response = await client.InvokeModelWithResponseStreamAsync(new InvokeModelWithResponseStreamRequest()
+            {
+                ModelId = model.ModelId,
+                ContentType = "application/json",
+                Accept = "application/json",
+                Body = AWSSDKUtils.GenerateMemoryStreamFromString(payload.ToJsonString())
+            },
+                cancellationToken).ConfigureAwait(false);
+
+            Channel<MistralResponse> buffer = Channel.CreateUnbounded<MistralResponse>();
+            bool isStreaming = true;
+
+            response.Body.ChunkReceived += BodyOnChunkReceived;
+            response.Body.StartProcessing();
+
+            while ((!cancellationToken.IsCancellationRequested && isStreaming) || (!cancellationToken.IsCancellationRequested && buffer.Reader.Count > 0))
+            {
+                yield return await buffer.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+            }
+            response.Body.ChunkReceived -= BodyOnChunkReceived;
+
+            yield break;
+
+            async void BodyOnChunkReceived(object? sender, EventStreamEventReceivedArgs<PayloadPart> e)
+            {
+                var streamResponse = await JsonSerializer.DeserializeAsync<MistralResponse>(e.EventStreamEvent.Bytes, cancellationToken: cancellationToken).ConfigureAwait(false);
+
+                if (streamResponse is null)
+                {
+                    throw new NullReferenceException($"Unable to deserialize {nameof(e.EventStreamEvent.Bytes)} to {nameof(MistralResponse)}");
+                }
+
+                if (streamResponse.GetStopReason() != null)
+                {
+                    isStreaming = false;
+                }
+
                 await buffer.Writer.WriteAsync(streamResponse, cancellationToken).ConfigureAwait(false);
             }
         }

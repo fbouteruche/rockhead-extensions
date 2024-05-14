@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Rockhead.Extensions.Meta;
 
-public class Llama2Response : IFoundationModelResponse
+public class LlamaResponse : IFoundationModelResponse
 {
     
     [JsonPropertyName("generation")] public string? Generation { get; init; }

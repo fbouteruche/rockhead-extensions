@@ -13,7 +13,7 @@
     <PackageTags>Bedrock, GenerativeAI, GenAI, AI</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
-    <Version>0.1.3-preview</Version>
+    <Version>0.1.4-preview</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Include="../../Readme.md" Pack="true" PackagePath="/"/>
+    <None Include="../../Readme.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

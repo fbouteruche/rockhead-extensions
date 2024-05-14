@@ -22,15 +22,21 @@ public abstract record Model(string ModelId, bool StreamingSupported)
     public abstract record Embed(string ModelId, bool StreamingSupported) : Model(ModelId, StreamingSupported);
     public record EmbedEnglishV3() : Embed("cohere.embed-english-v3", false);
     public record EmbedMultilingualV3() : Embed("cohere.embed-multilingual-v3", false);
-    public abstract record Llama2(string ModelId, bool StreamingSupported) : Model(ModelId, StreamingSupported);
-    public record Llama213BChatV1() : Llama2("meta.llama2-13b-chat-v1", true);
-    public record Llama270BChatV1() : Llama2("meta.llama2-70b-chat-v1", true);
+    public abstract record Llama(string ModelId, bool StreamingSupported) : Model(ModelId, StreamingSupported);
+    public record Llama213BChatV1() : Llama("meta.llama2-13b-chat-v1", true);
+    public record Llama270BChatV1() : Llama("meta.llama2-70b-chat-v1", true);
+    public record Llama38BInstructV1() : Llama("meta.llama3-8b-instruct-v1:0", true);
+    public record Llama370BInstructV1() : Llama("meta.llama3-70b-instruct-v1:0", true);
     public abstract record StableDiffusionXl(string ModelId, bool StreamingSupported) : Model(ModelId, StreamingSupported);
     public record StableDiffusionXlV1() : StableDiffusionXl("stability.stable-diffusion-xl-v1", false);
+    public abstract record Mistral(string ModelId, bool StreamingSupported) : Model(ModelId, StreamingSupported);
+    public record Mistral7BInstruct() : Mistral("mistral.mistral-7b-instruct-v0:2", true);
+    public record Mistral8x7BInstruct() : Mistral("mistral.mixtral-8x7b-instruct-v0:1", true);
+    public record MistralLarge() : Mistral("mistral.mistral-large-2402-v1:0", true);
 
     public static bool IsSupported(string modelId)
     {
-        return TryParse(modelId, out var model);
+        return TryParse(modelId, out _);
     }
     
     public static bool IsStreamingSupported(string modelId)
@@ -71,7 +77,12 @@ public abstract record Model(string ModelId, bool StreamingSupported)
             "cohere.embed-multilingual-v3" => new EmbedMultilingualV3(),
             "meta.llama2-13b-chat-v1" => new Llama213BChatV1(),
             "meta.llama2-70b-chat-v1" => new Llama270BChatV1(),
+            "meta.llama3-8b-instruct-v1:0" => new Llama38BInstructV1(),
+            "meta.llama3-70b-instruct-v1:0" => new Llama370BInstructV1(),
             "stability.stable-diffusion-xl-v1" => new StableDiffusionXlV1(),
+            "mistral.mistral-7b-instruct-v0:2" => new Mistral7BInstruct(),
+            "mistral.mixtral-8x7b-instruct-v0:1" => new Mistral8x7BInstruct(),
+            "mistral.mistral-large-2402-v1:0" => new MistralLarge(),
             _ => throw new ArgumentException($"{modelId} is not a supported or valid model Id")
         };
 }

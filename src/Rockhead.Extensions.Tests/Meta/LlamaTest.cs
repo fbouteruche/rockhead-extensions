@@ -4,26 +4,28 @@ using Rockhead.Extensions.Meta;
 
 namespace Rockhead.Extensions.Tests.Meta;
 
-public class Llama2Test
+public class LlamaTest
 {
     private static readonly AmazonBedrockRuntimeClient BedrockRuntime = new(RegionEndpoint.USEast1);
-    public static TheoryData<Model.Llama2> Models =>
-        new TheoryData<Model.Llama2>
+    public static TheoryData<Model.Llama> Models =>
+        new TheoryData<Model.Llama>
         {
             new Model.Llama213BChatV1(),
-            new Model.Llama270BChatV1()
+            new Model.Llama270BChatV1(),
+            new Model.Llama38BInstructV1(),
+            new Model.Llama370BInstructV1()
         };
     
     [Theory]
     [Trait("Category", "Integration")]
     [MemberData(nameof(Models))]
-    public async Task InvokeLlama2Async_ShouldNotBeNullOrEmpty(Model.Llama2 model)
+    public async Task InvokeLlamaModelAsync_ShouldNotBeNullOrEmpty(Model.Llama model)
     {
         // Arrange
         const string prompt = "Describe in one sentence what it a large language model";
         
         // Act
-        var response = await BedrockRuntime.InvokeLlama2Async(model, prompt);
+        var response = await BedrockRuntime.InvokeLlamaAsync(model, prompt);
         
         // Assert
         Assert.NotNull(response);
@@ -39,14 +41,14 @@ public class Llama2Test
     [Theory]
     [Trait("Category", "Integration")]
     [MemberData(nameof(Models))]
-    public async Task InvokeLlama2Async_ValidConfig_ShouldNotBeNullOrEmpty(Model.Llama2 model)
+    public async Task InvokeLlamaModelAsync_ValidConfig_ShouldNotBeNullOrEmpty(Model.Llama model)
     {
         // Arrange
         const string prompt = "Describe in one sentence what it a large language model";
-        var config = new Llama2TextGenerationConfig();
+        var config = new LlamaTextGenerationConfig();
         
         // Act
-        var response = await BedrockRuntime.InvokeLlama2Async(model, prompt, config);
+        var response = await BedrockRuntime.InvokeLlamaAsync(model, prompt, config);
         
         // Assert
         Assert.NotNull(response);
@@ -61,14 +63,14 @@ public class Llama2Test
     [Theory()]
     [Trait("Category", "Integration")]
     [MemberData(nameof(Models))]
-    public async Task InvokeLlama2WithResponseStreamAsync_ShouldNotBeNullOrEmpty(Model.Llama2 model)
+    public async Task InvokeLlamaModelWithResponseStreamAsync_ShouldNotBeNullOrEmpty(Model.Llama model)
     {
         // Arrange
         const string prompt = "Describe in one sentence what it a large language model";
         
         // Act
         int? promptTokenCount = null;
-        await foreach (var chunk in BedrockRuntime.InvokeLlama2WithResponseStreamAsync(model, prompt))
+        await foreach (var chunk in BedrockRuntime.InvokeLlamaWithResponseStreamAsync(model, prompt))
         {
             // Assert
             Assert.NotNull(chunk);
@@ -83,15 +85,15 @@ public class Llama2Test
     [Theory()]
     [Trait("Category", "Integration")]
     [MemberData(nameof(Models))]
-    public async Task InvokeLlama2WithResponseStreamAsync_ValidConfig_ShouldNotBeNullOrEmpty(Model.Llama2 model)
+    public async Task InvokeLlamaWithResponseStreamAsync_ValidConfig_ShouldNotBeNullOrEmpty(Model.Llama model)
     {
         // Arrange
         const string prompt = "Describe in one sentence what it a large language model";
-        var config = new Llama2TextGenerationConfig();
+        var config = new LlamaTextGenerationConfig();
         
         // Act
         int? promptTokenCount = null;
-        await foreach (var chunk in BedrockRuntime.InvokeLlama2WithResponseStreamAsync(model, prompt, config))
+        await foreach (var chunk in BedrockRuntime.InvokeLlamaWithResponseStreamAsync(model, prompt, config))
         {
             // Assert
             Assert.NotNull(chunk);
