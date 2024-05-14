@@ -46,15 +46,22 @@ Available on Nuget: https://www.nuget.org/packages/Rockhead.Extensions
     - Support Command v14 Text and Command v14 Light Text
   - `InvokeEmbedV3Async`
 - Meta extension methods
-  - `InvokeLlama2Async`
+  - `InvokeLlamaAsync`
     - An extension method to invoke Llama 2 models to generate text with strongly type parameters and response
-    - Support Llama 2 13B Chat v1 and Llama 2 70B Chat v1
-  - `InvokeLlama2WithResponseStreamAsync`
+    - Support Llama 2 13B Chat v1, Llama 2 70B Chat v1, Llama 3 8B Instruct and Llama 3 70B Instruct
+  - `InvokeLlamaWithResponseStreamAsync`
     - An extension method to invoke Llama 2 models to generate text with strongly type parameters and returning an IAsyncEnumerable of strongly typed response
-    - Support Llama 2 13B Chat v1 and Llama 2 70B Chat v1
+    - Support Llama 2 13B Chat v1, Llama 2 70B Chat v1, Llama 3 8B Instruct and Llama 3 70B Instruct
 - Stability AI extension methods
   - `InvokeStableDiffusionXlForTextToImageAsync`
     - An extension method to invoke Stable Diffusion XL to generate images with strongly type parameters and response
+- MistralAI extension methods
+  - `InvokeMistralAsync`
+    - An extension method to invoke Mistral AI models to generate text with strongly type parameters and response
+    - Support Mistral AI 7B Instruct, Mistral AI 8x7B Instruct and Mistral Large
+  - `InvokeMistralWithResponseStreamAsync`
+    - An extension method to invoke Mistral AI models to generate text with strongly type parameters and returning an IAsyncEnumerable of strongly typed response
+    - Support Mistral AI 7B Instruct, Mistral AI 8x7B Instruct and Mistral Large
 
 ## Setup
 
@@ -115,13 +122,13 @@ public async Task<string> GetLlmDescription()
 public async Task<string> GetLlmDescription()
 {
     const string prompt = @"Describe in one sentence what it a large language model";
-    var config = new Llama2TextGenerationConfig()
+    var config = new LlamaTextGenerationConfig()
     {
         MaxGenLen = 2048,
         Temperature = 0.8f
     };
     
-    var response = await BedrockRuntime.InvokeLlama2Async(new Model.Llama270BChatV1(), prompt, config);
+    var response = await BedrockRuntime.InvokeLlamaAsync(new Model.Llama270BChatV1(), prompt, config);
     
     return response?.Generation ?? "";
 }
