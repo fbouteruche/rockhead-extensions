@@ -2,7 +2,7 @@
 
 namespace Rockhead.Extensions.Anthropic;
 
-public class ClaudeResponse : IFoundationModelResponse
+public class ClaudeTextGenerationResponse : IFoundationModelResponse
 {
     [JsonPropertyName("completion")] public string? Completion { get; init; }
 

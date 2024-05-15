@@ -279,7 +279,7 @@ namespace Rockhead.Extensions
         /// <param name="textGenerationConfig">The text generation configuration</param>
         /// <param name="cancellationToken">A cancellation token</param>
         /// <returns>The Claude model response</returns>
-        public static async Task<ClaudeResponse?> InvokeClaudeAsync(this AmazonBedrockRuntimeClient client, Model.Claude model, string prompt, ClaudeTextGenerationConfig? textGenerationConfig = null, CancellationToken cancellationToken = default)
+        public static async Task<ClaudeTextGenerationResponse?> InvokeClaudeAsync(this AmazonBedrockRuntimeClient client, Model.Claude model, string prompt, ClaudeTextGenerationConfig? textGenerationConfig = null, CancellationToken cancellationToken = default)
         {
             if (textGenerationConfig != null)
             {
@@ -302,8 +302,44 @@ namespace Rockhead.Extensions
                 },
                 cancellationToken).ConfigureAwait(false);
 
-            return await JsonSerializer.DeserializeAsync<ClaudeResponse>(response.Body, cancellationToken: cancellationToken).ConfigureAwait(false);
+            return await JsonSerializer.DeserializeAsync<ClaudeTextGenerationResponse>(response.Body, cancellationToken: cancellationToken).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Invoke a Claude model (Instant V1, V2, V2.1, V3 Sonnet, V3 Haiku, V3 Opus) for text completion
+        /// </summary>
+        /// <param name="client">The Amazon Bedrock Runtime client object</param>
+        /// <param name="model">The Claude model to invoke</param>
+        /// <param name="prompt">The input text to complete</param>
+        /// <param name="textGenerationConfig">The text generation configuration</param>
+        /// <param name="cancellationToken">A cancellation token</param>
+        /// <returns>The Claude model response</returns>
+        public static async Task<ClaudeMessagesResponse?> InvokeClaudeMessagesAsync(this AmazonBedrockRuntimeClient client, Model.Claude model, ClaudeMessage message, ClaudeMessagesConfig? messagesConfig = null, CancellationToken cancellationToken = default)
+        {
+            if (messagesConfig != null)
+            {
+                Validator.ValidateObject(messagesConfig, new ValidationContext(messagesConfig), true);
+            }
+            else
+            {
+                messagesConfig = new ClaudeMessagesConfig() { MaxTokens = 1000, Messages = new List<ClaudeMessage>() };
+            }
+            messagesConfig.Messages.Add(message);
+
+            JsonObject payload = JsonSerializer.SerializeToNode(messagesConfig)?.AsObject() ?? new();
+            
+            InvokeModelResponse response = await client.InvokeModelAsync(new InvokeModelRequest()
+            {
+                ModelId = model.ModelId,
+                ContentType = "application/json",
+                Accept = "application/json",
+                Body = AWSSDKUtils.GenerateMemoryStreamFromString(payload.ToJsonString())
+            },
+                cancellationToken).ConfigureAwait(false);
+
+            return await JsonSerializer.DeserializeAsync<ClaudeMessagesResponse>(response.Body, cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
+
 
         /// <summary>
         /// Invoke a Claude model (Instant V1, V2, V2.1) for text completion a response stream
@@ -314,7 +350,7 @@ namespace Rockhead.Extensions
         /// <param name="textGenerationConfig">The text generation configuration</param>
         /// <param name="cancellationToken">A cancellation token</param>
         /// <returns>An asynchronous enumeration of Claude model responses</returns>
-        public static async IAsyncEnumerable<ClaudeResponse> InvokeClaudeWithResponseStreamAsync(this AmazonBedrockRuntimeClient client, Model.Claude model, string prompt, ClaudeTextGenerationConfig? textGenerationConfig = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public static async IAsyncEnumerable<ClaudeTextGenerationResponse> InvokeClaudeWithResponseStreamAsync(this AmazonBedrockRuntimeClient client, Model.Claude model, string prompt, ClaudeTextGenerationConfig? textGenerationConfig = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             if (textGenerationConfig != null)
             {
@@ -337,7 +373,7 @@ namespace Rockhead.Extensions
                 }, 
                 cancellationToken).ConfigureAwait(false);
 
-            Channel<ClaudeResponse> buffer = Channel.CreateUnbounded<ClaudeResponse>();
+            Channel<ClaudeTextGenerationResponse> buffer = Channel.CreateUnbounded<ClaudeTextGenerationResponse>();
             bool isStreaming = true;
 
             response.Body.ChunkReceived += BodyOnChunkReceived;
@@ -353,11 +389,11 @@ namespace Rockhead.Extensions
             
             async void BodyOnChunkReceived(object? sender, EventStreamEventReceivedArgs<PayloadPart> e)
             {
-                var streamResponse = await JsonSerializer.DeserializeAsync<ClaudeResponse>(e.EventStreamEvent.Bytes, cancellationToken: cancellationToken).ConfigureAwait(false);
+                var streamResponse = await JsonSerializer.DeserializeAsync<ClaudeTextGenerationResponse>(e.EventStreamEvent.Bytes, cancellationToken: cancellationToken).ConfigureAwait(false);
 
                 if (streamResponse is null)
                 {
-                    throw new NullReferenceException($"Unable to deserialize {nameof(e.EventStreamEvent.Bytes)} to {nameof(ClaudeResponse)}");
+                    throw new NullReferenceException($"Unable to deserialize {nameof(e.EventStreamEvent.Bytes)} to {nameof(ClaudeTextGenerationResponse)}");
                 }
                 
                 if (streamResponse.StopReason != null)

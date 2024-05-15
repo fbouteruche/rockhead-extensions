@@ -13,9 +13,13 @@ public abstract record Model(string ModelId, bool StreamingSupported)
     public record TitanEmbedTextV1() : Model("amazon.titan-embed-text-v1", false);
     public record TitanEmbedImageV1() : Model("amazon.titan-embed-image-v1", false);
     public abstract record Claude(string ModelId, bool StreamingSupported) : Model(ModelId, StreamingSupported);
-    public record ClaudeInstantV1() : Claude("anthropic.claude-instant-v1", true);
-    public record ClaudeV2() : Claude("anthropic.claude-v2", true);
-    public record ClaudeV2_1() : Claude("anthropic.claude-v2:1", true);
+    public abstract record ClaudeTextCompletionSupport(string ModelId, bool StreamingSupported) : Claude(ModelId, StreamingSupported);
+    public record ClaudeInstantV1() : ClaudeTextCompletionSupport("anthropic.claude-instant-v1", true);
+    public record ClaudeV2() : ClaudeTextCompletionSupport("anthropic.claude-v2", true);
+    public record ClaudeV2_1() : ClaudeTextCompletionSupport("anthropic.claude-v2:1", true);
+    public record Claude3Sonnet() : Claude("anthropic.claude-3-sonnet-20240229-v1:0", true);
+    public record Claude3Haiku() : Claude("anthropic.claude-3-haiku-20240307-v1:0", true);
+    public record Claude3Opus() : Claude("anthropic.claude-3-opus-20240229-v1:0", true);
     public abstract record CommandText(string ModelId, bool StreamingSupported) : Model(ModelId, StreamingSupported);
     public record CommandTextV14() : CommandText("cohere.command-text-v14", true);
     public record CommandLightTextV14() : CommandText("cohere.command-light-text-v14", true);
@@ -71,6 +75,9 @@ public abstract record Model(string ModelId, bool StreamingSupported)
             "anthropic.claude-instant-v1" => new ClaudeInstantV1(),
             "anthropic.claude-v2" => new ClaudeV2(),
             "anthropic.claude-v2:1" => new ClaudeV2_1(),
+            "anthropic.claude-3-sonnet-20240229-v1:0" => new Claude3Sonnet(),
+            "anthropic.claude-3-haiku-20240307-v1:0" => new Claude3Haiku(),
+            "anthropic.claude-3-opus-20240229-v1:0" => new Claude3Opus(),
             "cohere.command-text-v14" => new CommandTextV14(),
             "cohere.command-light-text-v14" => new CommandLightTextV14(),
             "cohere.embed-english-v3" => new EmbedEnglishV3(),
