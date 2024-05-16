@@ -15,10 +15,6 @@ public class ClaudeMessagesResponse : ClaudeMessage, IFoundationModelResponse
 
     [JsonPropertyName("type")] public string? Type { get; init; }
 
-    //[JsonPropertyName("role")] public string? Role { get; init; }
-
-    //[JsonPropertyName("content")] public IEnumerable<IClaudeContent>? Content { get; init; }
-
     [JsonPropertyName("stop_reason")] public string? StopReason { get; init; }
 
     [JsonPropertyName("stop_sequence")] public string? StopSequence { get; init; }

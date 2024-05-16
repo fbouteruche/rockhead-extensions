@@ -342,7 +342,7 @@ namespace Rockhead.Extensions
 
 
         /// <summary>
-        /// Invoke a Claude model (Instant V1, V2, V2.1) for text completion a response stream
+        /// Invoke a Claude model (Instant V1, V2, V2.1) for text completion with a response stream
         /// </summary>
         /// <param name="client">The Amazon Bedrock Runtime client object</param>
         /// <param name="model">The Claude model to invoke</param>
@@ -397,6 +397,72 @@ namespace Rockhead.Extensions
                 }
                 
                 if (streamResponse.StopReason != null)
+                {
+                    isStreaming = false;
+                }
+
+                await buffer.Writer.WriteAsync(streamResponse, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Invoke a Claude model (Instant V1, V2, V2.1, V3 Sonnet, V3 Haiku, V3 Opus) for text completion with a response stream
+        /// </summary>
+        /// <param name="client">The Amazon Bedrock Runtime client object</param>
+        /// <param name="model">The Claude model to invoke</param>
+        /// <param name="prompt">The input text to complete</param>
+        /// <param name="textGenerationConfig">The text generation configuration</param>
+        /// <param name="cancellationToken">A cancellation token</param>
+        /// <returns>An asynchronous enumeration of Claude model responses</returns>
+        public static async IAsyncEnumerable<IClaudeMessagesChunk> InvokeClaudeMessagesWithResponseStreamAsync(this AmazonBedrockRuntimeClient client, Model.Claude model, ClaudeMessage message, ClaudeMessagesConfig? messagesConfig = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            if (messagesConfig != null)
+            {
+                Validator.ValidateObject(messagesConfig, new ValidationContext(messagesConfig), true);
+            }
+            else
+            {
+                messagesConfig = new ClaudeMessagesConfig() { MaxTokens = 1000, Messages = new List<ClaudeMessage>() };
+            }
+            messagesConfig.Messages.Add(message);
+
+            JsonObject payload = JsonSerializer.SerializeToNode(messagesConfig)?.AsObject() ?? new();
+
+            InvokeModelWithResponseStreamResponse response = await client.InvokeModelWithResponseStreamAsync(new InvokeModelWithResponseStreamRequest()
+            {
+                ModelId = model.ModelId,
+                ContentType = "application/json",
+                Accept = "application/json",
+                Body = AWSSDKUtils.GenerateMemoryStreamFromString(payload.ToJsonString())
+            },
+                cancellationToken).ConfigureAwait(false);
+
+            Channel<IClaudeMessagesChunk> buffer = Channel.CreateUnbounded<IClaudeMessagesChunk>();
+            bool isStreaming = true;
+
+            response.Body.ChunkReceived += BodyOnChunkReceived;
+            response.Body.StartProcessing();
+
+            while ((!cancellationToken.IsCancellationRequested && isStreaming) || (!cancellationToken.IsCancellationRequested && buffer.Reader.Count > 0))
+            {
+                yield return await buffer.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+            }
+            response.Body.ChunkReceived -= BodyOnChunkReceived;
+
+            yield break;
+
+            async void BodyOnChunkReceived(object? sender, EventStreamEventReceivedArgs<PayloadPart> e)
+            {
+                var message = new StreamReader(e.EventStreamEvent.Bytes).ReadToEnd();
+                e.EventStreamEvent.Bytes.Position = 0;
+                var streamResponse = await JsonSerializer.DeserializeAsync<IClaudeMessagesChunk>(e.EventStreamEvent.Bytes, cancellationToken: cancellationToken).ConfigureAwait(false);
+
+                if (streamResponse is null)
+                {
+                    throw new NullReferenceException($"Unable to deserialize {nameof(e.EventStreamEvent.Bytes)} to {nameof(IClaudeMessagesChunk)}");
+                }
+
+                if (streamResponse is ClaudeMessagesMessageStopChunk)
                 {
                     isStreaming = false;
                 }
